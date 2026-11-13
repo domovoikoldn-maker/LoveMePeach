@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Love Me Peach</string>
+
+    <!-- Выбор персонажа -->
+    <string name="select_subtitle">О ком ты будешь заботиться?</string>
+    <string name="select_choose">Выбрать</string>
+    <string name="select_footer">Поменять персонажа можно в любой момент кнопкой «Сброс».</string>
+    <string name="name_female">Мира</string>
+    <string name="name_male">Кай</string>
+
+    <!-- Уход -->
+    <string name="stat_fullness">Сытость</string>
+    <string name="stat_mood">Настроение</string>
+    <string name="stat_affection">Симпатия</string>
+    <string name="btn_feed">Покормить</string>
+    <string name="btn_gift">Подарок</string>
+    <string name="btn_talk">Поговорить</string>
+    <string name="btn_reset">Сброс</string>
+    <string name="need_place">Сначала поставь персонажа на стол</string>
+    <string name="reset_title">Начать заново?</string>
+    <string name="reset_message">Весь прогресс сотрётся, и можно будет выбрать другого персонажа.</string>
+    <string name="reset_confirm">Сбросить</string>
+    <string name="finale_title">Вы пара!</string>
+    <string name="finale_message">Ты покорил(а) сердце: %1$s. Можно остаться вместе или начать заново с другим персонажем.</string>
+    <string name="finale_stay">Остаться</string>
+    <string name="finale_restart">Начать заново</string>
+
+    <!-- Подсказки -->
+    <string name="status_starting">Запуск AR…</string>
+    <string name="status_not_tracking">Медленно поводите телефоном — AR изучает комнату</string>
+    <string name="status_searching_plane">Наведите камеру на стол и немного подвигайте телефон</string>
+    <string name="status_ready_to_place">Нажмите на сетку, чтобы поставить персонажа</string>
+    <string name="status_placed">Тап по персонажу — погладить, тап по столу — переставить</string>
+
+    <!-- Ошибки -->
+    <string name="error_camera_permission">Без доступа к камере AR не работает. Разрешите камеру в настройках приложения.</string>
+    <string name="error_camera_busy">Камера недоступна. Закройте другие приложения с камерой и откройте это заново.</string>
+    <string name="error_arcore_not_installed">Нужно установить «Сервисы Google Play для AR»</string>
+    <string name="error_arcore_too_old">Обновите «Сервисы Google Play для AR» в Google Play</string>
+    <string name="error_app_too_old">Приложение устарело: обновите версию ARCore в app/build.gradle.kts</string>
+    <string name="error_device_not_supported">Это устройство не поддерживает ARCore</string>
+    <string name="error_session_failed">Не удалось запустить AR. Подробности — в Logcat.</string>
+</resources>

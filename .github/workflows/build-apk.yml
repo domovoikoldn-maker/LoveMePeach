@@ -1,0 +1,56 @@
+# Автоматическая сборка APK на серверах GitHub — Android Studio для этого не нужна.
+#
+# Запускается сам при каждой загрузке изменений в ветку main (или master),
+# а также вручную: вкладка Actions -> "Build APK" -> Run workflow.
+#
+# Где взять готовый файл:
+#   1) раздел Releases репозитория -> "apk-latest" -> ArTamagotchi.apk (прямая ссылка, удобно с телефона);
+#   2) вкладка Actions -> последний запуск -> Artifacts -> ArTamagotchi-apk (скачается zip с APK внутри).
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # нужно только для публикации APK в разделе Releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Android SDK на серверах GitHub уже установлен; Gradle и библиотеки скачаются сами
+      - name: Build debug APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon --stacktrace assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk ArTamagotchi.apk
+
+      - name: Upload APK as build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ArTamagotchi-apk
+          path: ArTamagotchi.apk
+
+      # Перезаписывает один и тот же релиз "apk-latest" свежим файлом.
+      # Если этот шаг не сработает, сборка всё равно считается успешной: APK останется в Artifacts.
+      - name: Publish APK to Releases
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete apk-latest --yes --cleanup-tag || true
+          gh release create apk-latest ArTamagotchi.apk \
+            --target "$GITHUB_SHA" \
+            --title "AR Tamagotchi: latest build" \
+            --notes "Debug APK, built automatically from commit $GITHUB_SHA."

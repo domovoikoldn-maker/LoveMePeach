@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран выбора персонажа -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/select_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/select_subtitle"
+            android:textColor="#D8C9FF"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/card_female"
+                style="@style/SelectCard"
+                android:layout_marginEnd="8dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:contentDescription="@string/name_female"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/character_female" />
+
+                <TextView style="@style/SelectName" android:text="@string/name_female" />
+                <TextView style="@style/SelectHint" android:text="@string/select_choose" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/card_male"
+                style="@style/SelectCard"
+                android:layout_marginStart="8dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:contentDescription="@string/name_male"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/character_male" />
+
+                <TextView style="@style/SelectName" android:text="@string/name_male" />
+                <TextView style="@style/SelectHint" android:text="@string/select_choose" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/select_footer"
+            android:textColor="#B9B0DE"
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>

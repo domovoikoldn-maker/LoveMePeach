@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка приложения: сердечко на тёмном круге.
+     Для релиза замените на нормальную адаптивную иконку
+     (правый клик по res -> New -> Image Asset). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#3A2A78"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    <path
+        android:fillColor="#FF4C82"
+        android:pathData="M24.00,37.00C12.60,29.20 9.60,22.60 10.80,18.40C12.00,13.00 20.40,11.20 24.00,17.80C27.60,11.20 36.00,13.00 37.20,18.40C38.40,22.60 35.40,29.20 24.00,37.00z" />
+    <path
+        android:fillColor="#FFD0DE"
+        android:pathData="M17.7,16.6m-2.6,0a2.6,2 0,1 1,5.2 0a2.6,2 0,1 1,-5.2 0" />
+</vector>
