@@ -81,6 +81,7 @@ class ArRenderer(
     private var heroMesh: Mesh? = null
     private val foodMeshes = arrayOfNulls<Mesh>(Food.entries.size)
     private val cabinMeshes = arrayOfNulls<Mesh>(Cabin.entries.size)
+    private var beddingMesh: Mesh? = null
     private var shadowTextureId = 0
 
     private val pendingTaps = ConcurrentLinkedQueue<FloatArray>()
@@ -188,6 +189,7 @@ class ArRenderer(
         for (food in Food.entries) foodMeshes[food.ordinal] = Shapes.food(food)
         cabinMeshes[Cabin.SHOWER.ordinal] = Shapes.cabin(shower = true)
         cabinMeshes[Cabin.TOILET.ordinal] = Shapes.cabin(shower = false)
+        beddingMesh = Shapes.bedding()
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -268,6 +270,9 @@ class ArRenderer(
             if (heroShown && mesh != null) {
                 modelRenderer.draw(mesh, character.modelMatrix, character.pose, character.sway, character.breath, character.neckY, outline = true)
             }
+            // Спящий укрыт одеялом
+            val bedding = beddingMesh
+            if (heroShown && character.lying && bedding != null) modelRenderer.draw(bedding, character.modelMatrix)
             drawCabin()
             drawFood()
             modelRenderer.end()

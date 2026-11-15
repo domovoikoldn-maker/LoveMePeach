@@ -63,6 +63,11 @@ class Character3D {
     private var time = 0f
     private var age = 0f
     private var lie = 0f              // 0 — стоит, 1 — лежит
+    private var sleepYaw = 0f
+    private var sleepYawSet = false
+
+    /** Персонаж уже лёг (можно рисовать одеяло). */
+    val lying: Boolean get() = lie > 0.75f
     private var reaction: Reaction? = null
     private var reactionTime = 0f
 
@@ -95,11 +100,17 @@ class Character3D {
         age += dt
 
         // Поворачиваемся лицом к камере (только вокруг вертикали и плавно). Спящий не вертится.
-        if (!sleeping) {
-            val dx = cameraPose.tx() - position[0]
-            val dz = cameraPose.tz() - position[2]
+        // Ложась спать, один раз разворачиваемся боком к камере и дальше не вертимся.
+        val dx = cameraPose.tx() - position[0]
+        val dz = cameraPose.tz() - position[2]
+        if (sleeping && !sleepYawSet) {
+            sleepYaw = atan2(dx, dz) + (PI / 2).toFloat()
+            sleepYawSet = true
+        }
+        if (!sleeping) sleepYawSet = false
+        run {
             if (dx * dx + dz * dz > 1e-6f) {
-                var diff = atan2(dx, dz) - yaw
+                var diff = (if (sleeping) sleepYaw else atan2(dx, dz)) - yaw
                 while (diff > PI) diff -= (2 * PI).toFloat()
                 while (diff < -PI) diff += (2 * PI).toFloat()
                 yaw += diff * min(1f, dt * 4f)
