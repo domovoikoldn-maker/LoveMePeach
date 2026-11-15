@@ -61,6 +61,9 @@ class MainActivity : AppCompatActivity(), SceneListener {
     private lateinit var coinsText: TextView
     private lateinit var feedButton: Button
     private lateinit var sleepButton: Button
+    private lateinit var sitButton: Button
+    private lateinit var simonPanel: android.widget.LinearLayout
+    private lateinit var gameStopButton: Button
     private lateinit var bars: List<ProgressBar>
 
     private var session: Session? = null
@@ -134,6 +137,9 @@ class MainActivity : AppCompatActivity(), SceneListener {
         coinsText = findViewById(R.id.coins_text)
         feedButton = findViewById(R.id.btn_feed)
         sleepButton = findViewById(R.id.btn_sleep)
+        sitButton = findViewById(R.id.btn_sit)
+        simonPanel = findViewById(R.id.simon_panel)
+        gameStopButton = findViewById(R.id.btn_game_stop)
         bars = listOf(R.id.bar_fullness, R.id.bar_energy, R.id.bar_hygiene, R.id.bar_bladder, R.id.bar_mood, R.id.bar_bond)
             .map { findViewById<ProgressBar>(it) }
 
@@ -151,7 +157,10 @@ class MainActivity : AppCompatActivity(), SceneListener {
         findViewById<Button>(R.id.btn_shower).setOnClickListener { startCabin(Cabin.SHOWER) }
         findViewById<Button>(R.id.btn_toilet).setOnClickListener { startCabin(Cabin.TOILET) }
         findViewById<Button>(R.id.btn_talk).setOnClickListener { onTalkClicked() }
-        findViewById<Button>(R.id.btn_game).setOnClickListener { startGame() }
+        findViewById<Button>(R.id.btn_game).setOnClickListener { showGames() }
+        sitButton.setOnClickListener { if (sitting || ready()) setSitting(!sitting) }
+        gameStopButton.setOnClickListener { finishGame(silent = false) }
+        buildSimonPanel()
         findViewById<Button>(R.id.btn_shop).setOnClickListener { showShop() }
         findViewById<View>(R.id.btn_settings).setOnClickListener { showSettings() }
         // «Скрытый» вход в настройки характера: долгое нажатие на имя
@@ -293,6 +302,7 @@ class MainActivity : AppCompatActivity(), SceneListener {
             say(Situation.REFUSE)
             return
         }
+        setSitting(false)
         heldFood = food
         renderer.holdFood(food)
         feedButton.setText(R.string.btn_feed_cancel)
@@ -318,6 +328,7 @@ class MainActivity : AppCompatActivity(), SceneListener {
             return
         }
         if (heldFood != null) releaseFood()
+        setSitting(false)
         care.startSleep()
         applySleepUi()
         afterChange()
@@ -342,6 +353,7 @@ class MainActivity : AppCompatActivity(), SceneListener {
             return
         }
         if (heldFood != null) releaseFood()
+        setSitting(false)
         cabinBusy = true
         renderer.startCabin(type)
     }
@@ -380,43 +392,193 @@ class MainActivity : AppCompatActivity(), SceneListener {
     }
 
     // ------------------------------------------------------------------------
-    // Мини-игра «Поймай звёзды»
+    // Мини-игры
     // ------------------------------------------------------------------------
 
-    private fun startGame() {
+    private enum class MiniGame(val title: String) {
+        STARS("Звездопад — лови звёзды"),
+        BALL("Мячик — не дай упасть"),
+        SIMON("Повторюшка — запомни движения"),
+        DANCE("Танцы — просто потанцевать"),
+        FREE_BALL("Поиграть с мячом")
+    }
+
+    private var currentGame: MiniGame? = null
+
+    private fun showGames() {
         if (!ready()) return
         if (care.energy < 10f) {
             toast("${profile.heroName} без сил. Сначала сон.")
             return
         }
+        val list = MiniGame.entries
+        AlertDialog.Builder(this)
+            .setTitle("Во что играем?")
+            .setItems(list.map { it.title }.toTypedArray()) { _, which -> startGame(list[which]) }
+            .show()
+    }
+
+    private fun startGame(g: MiniGame) {
         if (heldFood != null) releaseFood()
+        setSitting(false)
+        currentGame = g
         gameRunning = true
         gameStars = 0
-        gameSecondsLeft = GAME_SECONDS
         gameHud.visibility = View.VISIBLE
+        when (g) {
+            MiniGame.STARS -> {
+                gameSecondsLeft = GAME_SECONDS
+                renderer.setGame(SceneGame.STARS)
+                handler.postDelayed(gameTicker, 1000)
+            }
+            MiniGame.DANCE -> {
+                gameSecondsLeft = 20
+                renderer.setGame(SceneGame.DANCE)
+                handler.postDelayed(gameTicker, 1000)
+            }
+            MiniGame.BALL -> renderer.setGame(SceneGame.BALL)
+            MiniGame.FREE_BALL -> {
+                renderer.setGame(SceneGame.FREE_BALL)
+                gameStopButton.visibility = View.VISIBLE
+            }
+            MiniGame.SIMON -> {
+                simonSequence.clear()
+                simonNextRound()
+            }
+        }
         showGameHud()
-        renderer.setGame(true)
-        handler.postDelayed(gameTicker, 1000)
     }
 
     private fun showGameHud() {
-        gameHud.text = "Лови звёзды!  ★ $gameStars   ·   $gameSecondsLeft с"
+        gameHud.text = when (currentGame) {
+            MiniGame.STARS -> "Лови звёзды!  ★ $gameStars   ·   $gameSecondsLeft с"
+            MiniGame.DANCE -> "Танцуем!  $gameSecondsLeft с"
+            MiniGame.BALL -> "Подбивай мяч тапом!  Ударов: $gameStars"
+            MiniGame.FREE_BALL -> "Тапай по мячу. ${profile.heroName} отбивает ногой"
+            MiniGame.SIMON -> if (simonShowing) "Смотри и запоминай…  Раунд ${simonSequence.size - 1}"
+                else "Повтори!  ${simonInput} из ${simonSequence.size}"
+            null -> ""
+        }
+    }
+
+    override fun onBallJuggled() = runOnUiThread {
+        if (currentGame == MiniGame.BALL) {
+            gameStars++
+            showGameHud()
+        }
+    }
+
+    override fun onBallDropped() = runOnUiThread {
+        if (currentGame == MiniGame.BALL) finishGame(silent = false)
+    }
+
+    // --- «Повторюшка»: персонаж показывает последовательность движений, игрок повторяет кнопками ---
+
+    private val simonMoves: List<Pair<String, Reaction>> by lazy {
+        val all = mutableListOf("Прыжок" to Reaction.HAPPY, "Присед" to Reaction.SQUAT, "Поклон" to Reaction.BOW, "Кружок" to Reaction.SPIN)
+        if (profile.hero.hasArms) all.add(0, "Помахать" to Reaction.WAVE)
+        all
+    }
+    private val simonSequence = ArrayList<Int>()
+    private var simonInput = 0
+    private var simonShowing = false
+
+    private fun simonNextRound() {
+        // В первом раунде два движения, дальше на одно больше каждый раунд
+        if (simonSequence.isEmpty()) simonSequence.add(Random.nextInt(simonMoves.size))
+        simonSequence.add(Random.nextInt(simonMoves.size))
+        simonInput = 0
+        simonShowing = true
+        simonPanel.visibility = View.GONE
+        showGameHud()
+        simonSequence.forEachIndexed { i, move ->
+            handler.postDelayed({ if (currentGame == MiniGame.SIMON) renderer.react(simonMoves[move].second) }, 900L + i * 1500L)
+        }
+        handler.postDelayed({
+            if (currentGame == MiniGame.SIMON) {
+                simonShowing = false
+                simonPanel.visibility = View.VISIBLE
+                showGameHud()
+            }
+        }, 900L + simonSequence.size * 1500L)
+    }
+
+    private fun onSimonPressed(move: Int) {
+        if (currentGame != MiniGame.SIMON || simonShowing) return
+        renderer.react(simonMoves[move].second)
+        if (simonSequence[simonInput] != move) {
+            gameStars = simonSequence.size - 2          // столько раундов пройдено
+            finishGame(silent = false)
+            return
+        }
+        simonInput++
+        showGameHud()
+        if (simonInput == simonSequence.size) {
+            renderer.react(Reaction.HAPPY, stars = true)
+            simonPanel.visibility = View.GONE
+            handler.postDelayed({ if (currentGame == MiniGame.SIMON) simonNextRound() }, 1200L)
+        }
+    }
+
+    private fun buildSimonPanel() {
+        simonPanel.removeAllViews()
+        simonMoves.forEachIndexed { i, (title, _) ->
+            val b = Button(this)
+            b.text = title
+            b.isAllCaps = false
+            b.textSize = 12f
+            b.minWidth = 0
+            b.setPadding(4, 0, 4, 0)
+            b.layoutParams = android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+            b.setOnClickListener { onSimonPressed(i) }
+            simonPanel.addView(b)
+        }
     }
 
     private fun finishGame(silent: Boolean) {
+        val g = currentGame ?: return
         handler.removeCallbacks(gameTicker)
+        currentGame = null
         gameRunning = false
         gameHud.visibility = View.GONE
-        renderer.setGame(false)
-        val earned = care.gameReward(gameStars)
+        simonPanel.visibility = View.GONE
+        gameStopButton.visibility = View.GONE
+        renderer.setGame(SceneGame.NONE)
+        if (g == MiniGame.FREE_BALL) {
+            care.gameReward(0)
+            afterChange()
+            return
+        }
+        val score = if (g == MiniGame.DANCE) 0 else gameStars
+        val earned = care.gameReward(score)
+        if (g == MiniGame.DANCE) care.mood = (care.mood + 10f).coerceAtMost(100f)
         if (!silent) {
-            toast("Поймано звёзд: $gameStars · +$earned монет")
-            if (gameStars > 0) {
+            val what = when (g) {
+                MiniGame.STARS -> "Поймано звёзд: $score"
+                MiniGame.BALL -> "Ударов по мячу: $score"
+                MiniGame.SIMON -> "Пройдено раундов: $score"
+                else -> "Потанцевали!"
+            }
+            toast(if (earned > 0) "$what · +$earned монет" else what)
+            renderer.setSad(false)
+            if (score > 0 || g == MiniGame.DANCE) {
                 renderer.react(Reaction.HAPPY, stars = true)
                 say(Situation.WIN)
+            } else {
+                renderer.react(Reaction.REFUSE)
             }
         }
         afterChange()
+    }
+
+    // --- Сидеть / стоять ---
+
+    private var sitting = false
+
+    private fun setSitting(value: Boolean) {
+        sitting = value
+        renderer.setSitting(value)
+        sitButton.setText(if (value) R.string.btn_stand else R.string.btn_sit)
     }
 
     // ------------------------------------------------------------------------
@@ -503,6 +665,10 @@ class MainActivity : AppCompatActivity(), SceneListener {
 
         // Реплики «от себя»: не чаще раза в 35–75 секунд и только когда персонаж свободен
         val free = renderer.isCharacterPlaced && !care.sleeping && !cabinBusy && !gameRunning && heldFood == null
+        // Иногда сам присаживается отдохнуть и потом встаёт
+        if (free && !sitting && care.energy < 70f && Random.nextFloat() < 0.04f) setSitting(true)
+        else if (sitting && Random.nextFloat() < 0.05f) setSitting(false)
+
         if (free && now >= nextIdleSpeechAt) {
             val situation = when (need) {
                 Need.FOOD -> Situation.HUNGRY

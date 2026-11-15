@@ -31,7 +31,10 @@
     <string name="btn_shower">Душ</string>
     <string name="btn_toilet">Туалет</string>
     <string name="btn_talk">Поговорить</string>
-    <string name="btn_game">Мини-игра</string>
+    <string name="btn_game">Игры</string>
+    <string name="btn_sit">Сесть</string>
+    <string name="btn_stand">Встать</string>
+    <string name="btn_game_stop">Закончить игру</string>
     <string name="btn_shop">Магазин</string>
     <string name="btn_settings">Настройки</string>
     <string name="need_place">Сначала поставь персонажа на стол</string>

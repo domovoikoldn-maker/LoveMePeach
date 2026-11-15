@@ -31,7 +31,10 @@ class MeshBuilder {
     }
 
     /** Шар (или эллипсоид) с центром (cx, cy, cz) и радиусами по осям. */
-    fun sphere(cx: Float, cy: Float, cz: Float, rx: Float, ry: Float, rz: Float, color: Int, segments: Int = 18, rings: Int = 10) {
+    fun sphere(
+        cx: Float, cy: Float, cz: Float, rx: Float, ry: Float, rz: Float, color: Int,
+        segments: Int = 18, rings: Int = 10, colorOf: ((segment: Int) -> Int)? = null
+    ) {
         val base = colors.size
         for (r in 0..rings) {
             val phi = PI * r / rings
@@ -40,7 +43,7 @@ class MeshBuilder {
                 val ux = (sin(phi) * cos(theta)).toFloat()
                 val uy = cos(phi).toFloat()
                 val uz = (sin(phi) * sin(theta)).toFloat()
-                vertex(cx + ux * rx, cy + uy * ry, cz + uz * rz, ux / rx, uy / ry, uz / rz, color)
+                vertex(cx + ux * rx, cy + uy * ry, cz + uz * rz, ux / rx, uy / ry, uz / rz, colorOf?.invoke(s % segments) ?: color)
             }
         }
         val row = segments + 1
@@ -132,9 +135,10 @@ class MeshBuilder {
             vb.put((vertices[o + 3] * 127).toInt().toByte())
             vb.put((vertices[o + 4] * 127).toInt().toByte())
             vb.put((vertices[o + 5] * 127).toInt().toByte())
-            vb.put(0.toByte())
+            vb.put(0.toByte())                                                     // это не лицо
             val c = colors[i]
-            vb.put((c shr 16).toByte()).put((c shr 8).toByte()).put(c.toByte()).put(0.toByte())   // вес головы = 0
+            vb.put((c shr 16).toByte()).put((c shr 8).toByte()).put(c.toByte()).put(255.toByte())
+            vb.put(0.toByte()).put(0.toByte()).put(255.toByte()).put(0.toByte())   // кость 0 с весом 1
         }
         vb.position(0)
         val ib = ByteBuffer.allocateDirect(indices.size * 2).order(ByteOrder.nativeOrder())
@@ -187,6 +191,14 @@ object Shapes {
                 }
             }
         }
+    }.build()
+
+    /** Мяч: шар диаметром 1 с центром в начале координат, шесть цветных долек. */
+    fun ball(): Mesh = MeshBuilder().apply {
+        val palette = intArrayOf(0xFF5C9E, 0xFFFFFF, 0x5FD3C8, 0xFFD84D, 0x8466E2, 0xFFFFFF)
+        sphere(0f, 0f, 0f, 0.5f, 0.5f, 0.5f, 0xFFFFFF, 24, 14) { segment -> palette[(segment * 6 / 24) % 6] }
+        sphere(0f, 0.49f, 0f, 0.08f, 0.02f, 0.08f, 0x2B2342, 10, 4)
+        sphere(0f, -0.49f, 0f, 0.08f, 0.02f, 0.08f, 0x2B2342, 10, 4)
     }.build()
 
     /**

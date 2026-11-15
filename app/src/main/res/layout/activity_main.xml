@@ -68,6 +68,28 @@
         android:layout_marginBottom="@dimen/status_margin"
         android:orientation="vertical">
 
+        <!-- Кнопки «Повторюшки»: заполняются из кода -->
+        <LinearLayout
+            android:id="@+id/simon_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/status_background"
+            android:orientation="horizontal"
+            android:padding="6dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_game_stop"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:text="@string/btn_game_stop"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/speech_text"
             android:layout_width="wrap_content"
@@ -183,6 +205,7 @@
                 <Button android:id="@+id/btn_talk" style="@style/CareButton" android:text="@string/btn_talk" />
                 <Button android:id="@+id/btn_game" style="@style/CareButton" android:text="@string/btn_game" />
                 <Button android:id="@+id/btn_shop" style="@style/CareButton" android:text="@string/btn_shop" />
+                <Button android:id="@+id/btn_sit" style="@style/CareButton" android:text="@string/btn_sit" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
