@@ -4,9 +4,9 @@
     <style name="StatLabel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginTop">4dp</item>
         <item name="android:textColor">#E0D8FF</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
     <!-- Горизонтальная шкала 0..100 -->
@@ -25,8 +25,12 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">2dp</item>
+        <item name="android:paddingEnd">2dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <!-- Карточка на экране выбора -->
@@ -57,5 +61,33 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#FF9CC6</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Ячейка со шкалой: три в ряд -->
+    <style name="StatCell">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!-- Поля профиля -->
+    <style name="FormLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:textColor">#D8C9FF</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="FormEdit">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorHint">#80FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
     </style>
 </resources>

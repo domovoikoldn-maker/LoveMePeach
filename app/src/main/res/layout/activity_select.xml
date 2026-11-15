@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Экран выбора персонажа -->
+<!-- Экран выбора персонажа и настройки профиля -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/select_background"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:text="@string/app_name"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="20dp"
-            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="14dp"
             android:text="@string/select_subtitle"
             android:textColor="#D8C9FF"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,43 +40,54 @@
             <LinearLayout
                 android:id="@+id/card_female"
                 style="@style/SelectCard"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="6dp">
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="320dp"
+                    android:layout_height="230dp"
                     android:contentDescription="@string/name_female"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/character_female" />
-
-                <TextView style="@style/SelectName" android:text="@string/name_female" />
-                <TextView style="@style/SelectHint" android:text="@string/select_choose" />
+                    android:src="@drawable/preview_girl" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/card_male"
                 style="@style/SelectCard"
-                android:layout_marginStart="8dp">
+                android:layout_marginStart="6dp">
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="320dp"
+                    android:layout_height="230dp"
                     android:contentDescription="@string/name_male"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/character_male" />
-
-                <TextView style="@style/SelectName" android:text="@string/name_male" />
-                <TextView style="@style/SelectHint" android:text="@string/select_choose" />
+                    android:src="@drawable/preview_boy" />
             </LinearLayout>
         </LinearLayout>
+
+        <include
+            android:id="@+id/profile_form"
+            layout="@layout/view_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/btn_start"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/btn_start"
+            android:textAllCaps="false"
+            android:textSize="17sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/select_footer"
             android:textColor="#B9B0DE"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>

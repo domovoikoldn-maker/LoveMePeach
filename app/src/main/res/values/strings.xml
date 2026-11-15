@@ -2,28 +2,46 @@
 <resources>
     <string name="app_name">Love Me Peach</string>
 
-    <!-- Выбор персонажа -->
-    <string name="select_subtitle">О ком ты будешь заботиться?</string>
-    <string name="select_choose">Выбрать</string>
-    <string name="select_footer">Поменять персонажа можно в любой момент кнопкой «Сброс».</string>
-    <string name="name_female">Мира</string>
-    <string name="name_male">Кай</string>
+    <!-- Выбор персонажа и профиль -->
+    <string name="select_subtitle">Кто будет жить у тебя на столе?</string>
+    <string name="select_footer">Всё это можно поменять позже в настройках.</string>
+    <string name="name_female">Девушка</string>
+    <string name="name_male">Парень</string>
+    <string name="btn_start">Начать</string>
+    <string name="form_hero_name">Имя персонажа</string>
+    <string name="form_player_name">Как персонаж будет тебя называть</string>
+    <string name="form_player_hint">Имя или прозвище</string>
+    <string name="form_player_gender">Обращаться к тебе</string>
+    <string name="form_personality">Характер персонажа</string>
+    <string name="size_label">Рост персонажа: %1$d см</string>
+    <string name="size_hint">Рост можно менять и щипком двумя пальцами прямо на экране.</string>
 
     <!-- Уход -->
     <string name="stat_fullness">Сытость</string>
+    <string name="stat_energy">Энергия</string>
+    <string name="stat_hygiene">Чистота</string>
+    <string name="stat_bladder">Туалет</string>
     <string name="stat_mood">Настроение</string>
-    <string name="stat_affection">Симпатия</string>
-    <string name="btn_feed">Покормить</string>
-    <string name="btn_gift">Подарок</string>
+    <string name="stat_bond">Дружба</string>
+    <string name="coins">%1$d монет</string>
+    <string name="btn_feed">Еда</string>
+    <string name="btn_feed_cancel">Убрать</string>
+    <string name="btn_sleep">Сон</string>
+    <string name="btn_wake">Разбудить</string>
+    <string name="btn_shower">Душ</string>
+    <string name="btn_toilet">Туалет</string>
     <string name="btn_talk">Поговорить</string>
-    <string name="btn_reset">Сброс</string>
+    <string name="btn_game">Мини-игра</string>
+    <string name="btn_shop">Магазин</string>
+    <string name="btn_settings">Настройки</string>
     <string name="need_place">Сначала поставь персонажа на стол</string>
+    <string name="hint_hand_feed">Еда у тебя в руке. Поднеси её ко рту персонажа — веди телефон ближе</string>
     <string name="reset_title">Начать заново?</string>
     <string name="reset_message">Весь прогресс сотрётся, и можно будет выбрать другого персонажа.</string>
     <string name="reset_confirm">Сбросить</string>
-    <string name="finale_title">Вы пара!</string>
-    <string name="finale_message">Ты покорил(а) сердце: %1$s. Можно остаться вместе или начать заново с другим персонажем.</string>
-    <string name="finale_stay">Остаться</string>
+    <string name="finale_title">Лучшие друзья!</string>
+    <string name="finale_message">%1$s теперь твой лучший друг. Можно продолжать вместе или начать заново с другим персонажем.</string>
+    <string name="finale_stay">Продолжить</string>
     <string name="finale_restart">Начать заново</string>
 
     <!-- Подсказки -->
@@ -31,7 +49,7 @@
     <string name="status_not_tracking">Медленно поводите телефоном — AR изучает комнату</string>
     <string name="status_searching_plane">Наведите камеру на стол и немного подвигайте телефон</string>
     <string name="status_ready_to_place">Нажмите на сетку, чтобы поставить персонажа</string>
-    <string name="status_placed">Тап по персонажу — погладить, тап по столу — переставить</string>
+    <string name="status_placed">Тап по персонажу — погладить, по столу — переставить</string>
 
     <!-- Ошибки -->
     <string name="error_camera_permission">Без доступа к камере AR не работает. Разрешите камеру в настройках приложения.</string>
